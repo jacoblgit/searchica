@@ -1,0 +1,2 @@
+enron email data from github: ivanhb's EMA repo
+server/data/mbox/enron/mbox-enron-white-s-all.mbox

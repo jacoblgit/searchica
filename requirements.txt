@@ -1,0 +1,7 @@
+flask
+flask-cors
+numpy
+sentence-transformers
+beautifulsoup4
+scikit-learn
+pytest  # for running test
