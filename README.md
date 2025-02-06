@@ -58,14 +58,30 @@ Pytest suite covering:
 ```bash
 git clone [repository]
 pip install -r requirements.txt
-cd frontend && npm install
 ```
 
 ```bash
+# For production
+
+# Build frontend
+cd frontend
+npm run build
+
 # Start backend
+$env:FLASK_ENV = "production"
 cd backend
 python app.py
+```
+
+```bash
+# For development
 
 # Start frontend
-cd frontend && npm start
+cd frontend
+npm run dev
+
+# Start backend
+$env:FLASK_ENV = ""
+cd backend
+python app.py
 ```
