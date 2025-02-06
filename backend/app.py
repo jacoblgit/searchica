@@ -1,3 +1,4 @@
+from waitress import serve
 from flask import Flask, request, jsonify, send_from_directory, redirect
 from flask_cors import CORS
 from typing import List, Dict, Any, Optional
@@ -157,22 +158,32 @@ class SearchicaApp:
                 """Redirect everything else to root"""
                 return redirect('/')
 
-    def run(self, **kwargs) -> None:
-        """Run the Flask application."""
+    # def run(self, **kwargs) -> None:
+    #     """Run the Flask application."""
 
-        port = int(os.getenv('PORT', 5000))
+    #     port = int(os.getenv('PORT', 5000))
 
-        if IS_DEVELOPMENT:
-            kwargs.setdefault('debug', True)
-            kwargs.setdefault('host', 'localhost')
-        else:
-            kwargs['debug'] = False
-            kwargs['host'] = '0.0.0.0'
+    #     if IS_DEVELOPMENT:
+    #         kwargs.setdefault('debug', True)
+    #         kwargs.setdefault('host', 'localhost')
+    #     else:
+    #         kwargs['debug'] = False
+    #         kwargs['host'] = '0.0.0.0'
         
-        kwargs['port'] = port
-        self.app.run(**kwargs)
+    #     kwargs['port'] = port
+    #     self.app.run(**kwargs)
 
+app = SearchicaApp()
+application = app.app  # This exposes the Flask instance for Gunicorn
 
 if __name__ == "__main__":
-    app = SearchicaApp()
-    app.run()
+    # app.run()
+    port = int(os.getenv('PORT', 5000))
+
+    if IS_DEVELOPMENT:
+        host = 'localhost'
+    else:
+        host = '0.0.0.0'
+    
+    print(f"Running on {host}:{port} (localhost:{port} for local testing)")
+    serve(application, host=host, port=port)
