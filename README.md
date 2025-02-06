@@ -85,3 +85,14 @@ $env:FLASK_ENV = ""
 cd backend
 python app.py
 ```
+
+```bash
+# For deployment (Docker)
+
+# Build frontend
+cd frontend
+npm run build
+
+# Build Docker
+docker build -t searchica .
+```
