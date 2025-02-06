@@ -157,27 +157,11 @@ class SearchicaApp:
             def catch_all(path):
                 """Redirect everything else to root"""
                 return redirect('/')
-
-    # def run(self, **kwargs) -> None:
-    #     """Run the Flask application."""
-
-    #     port = int(os.getenv('PORT', 5000))
-
-    #     if IS_DEVELOPMENT:
-    #         kwargs.setdefault('debug', True)
-    #         kwargs.setdefault('host', 'localhost')
-    #     else:
-    #         kwargs['debug'] = False
-    #         kwargs['host'] = '0.0.0.0'
-        
-    #     kwargs['port'] = port
-    #     self.app.run(**kwargs)
-
+            
 app = SearchicaApp()
 application = app.app  # This exposes the Flask instance for Gunicorn
 
 if __name__ == "__main__":
-    # app.run()
     port = int(os.getenv('PORT', 5000))
 
     if IS_DEVELOPMENT:
