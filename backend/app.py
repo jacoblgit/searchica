@@ -1,7 +1,8 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory, redirect
 from flask_cors import CORS
 from typing import List, Dict, Any, Optional
 from pathlib import Path
+import os
 
 from email_processor import EmailProcessor
 from document_store import DocumentStore
@@ -9,12 +10,16 @@ from query_processor import QueryProcessor
 from visualization_processor import VisualizationProcessor
 from documents import Document
 
+# Environment-based configuration
+ENVIRONMENT = os.getenv('FLASK_ENV', 'development')
+IS_DEVELOPMENT = ENVIRONMENT == 'development'
+
 # Default configuration
 DEFAULT_CONFIG = {
     "MBOX_PATH": Path("../data/mbox-enron-white-s-all.mbox"),
     "STORE_PATH": Path("../data/processed_doc_cache.db"),
+    "STATIC_FOLDER": Path("dist") if not IS_DEVELOPMENT else None
 }
-
 
 class SearchicaApp:
     """
@@ -36,12 +41,17 @@ class SearchicaApp:
         if config:
             self.config.update(config)
 
-        self.app = Flask(__name__)
-        CORS(self.app)
-
+        if IS_DEVELOPMENT:
+            self.app = Flask(__name__)
+            CORS(self.app)
+        else:
+            self.app = Flask(__name__, static_folder=str(self.config["STATIC_FOLDER"]))
+        
         # Initialize document processing
         self.doc_list = self.init_documents(
-            self.config["MBOX_PATH"], self.config["STORE_PATH"], force_reprocess=False
+            self.config["MBOX_PATH"],
+            self.config["STORE_PATH"],
+            force_reprocess=False
         )
 
         # Initialize query processor
@@ -85,17 +95,20 @@ class SearchicaApp:
     def register_routes(self) -> None:
         """Register Flask route handlers."""
 
-        @self.app.route("/")
-        def home() -> Dict[str, str]:
+        @self.app.route("/api/status")
+        def status() -> Dict[str, str]:
             """
             Home endpoint returning API status.
 
             Returns:
                 Dictionary with API status information
             """
-            return jsonify({"status": "running", "version": "1.0", "api": "searchica"})
+            return jsonify({"status": "running",
+                            "version": "1.0",
+                            "api": "searchica",
+                            "environment": ENVIRONMENT})
 
-        @self.app.route("/search", methods=["POST"])
+        @self.app.route("/api/search", methods=["POST"])
         def search() -> Dict[str, Any]:
             """
             Search endpoint handling semantic search queries.
@@ -133,11 +146,33 @@ class SearchicaApp:
                 }
             )
 
+        if not IS_DEVELOPMENT:
+            @self.app.route('/')
+            def serve_root():
+                """Serve the static React app"""
+                return send_from_directory(self.app.static_folder, 'index.html')
+            
+            @self.app.route('/<path:path>')
+            def catch_all(path):
+                """Redirect everything else to root"""
+                return redirect('/')
+
     def run(self, **kwargs) -> None:
         """Run the Flask application."""
+
+        port = int(os.getenv('PORT', 5000))
+
+        if IS_DEVELOPMENT:
+            kwargs.setdefault('debug', True)
+            kwargs.setdefault('host', 'localhost')
+        else:
+            kwargs['debug'] = False
+            kwargs['host'] = '0.0.0.0'
+        
+        kwargs['port'] = port
         self.app.run(**kwargs)
 
 
 if __name__ == "__main__":
     app = SearchicaApp()
-    app.run(debug=True)
+    app.run()

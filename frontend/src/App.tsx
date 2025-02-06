@@ -27,7 +27,9 @@ function App() {
 
   const handleSearch = async (query: string) => {
     try {
-      const response = await fetch("http://localhost:5000/search", {
+      const apiUrl = import.meta.env.VITE_API_URL || "";
+      console.log("Using API URL:", `${apiUrl}/api/search`);
+      const response = await fetch(`${apiUrl}/api/search`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query }),
@@ -58,11 +60,9 @@ function App() {
       >
         <Row className="mt-1 mb-4">
           {" "}
-          {/* increased from my-3 */}
           <Col>
             <div className="d-flex align-items-center bg-white rounded p-4 shadow-sm">
               {" "}
-              {/* added padding and shadow */}
               <Logo />
               <div style={{ width: "100%" }}>
                 <SearchBar onSearch={handleSearch} />
