@@ -23,6 +23,5 @@ lerna-debug.log*
 
 # node/react
 node_modules
-dist
 dist-ssr
 *.local
