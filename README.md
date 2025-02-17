@@ -95,4 +95,9 @@ npm run build
 
 # Build Docker
 docker build -t searchica .
+
+# Deploy to Google Cloud
+docker tag searchica [full Google artifact registry address]:latest
+docker push [full Google artifact registry address]:latest
+# update Google Cloud Run image to be newly uploaded Docker container 
 ```
