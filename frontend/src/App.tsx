@@ -1,5 +1,5 @@
 import { Container, Row, Col } from "react-bootstrap";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { EmailResult, PlotData, Trace, Marker } from "./types";
 import SearchBar from "./components/SearchBar";
 import VisualizationPanel from "./components/VisualizationPanel";
@@ -7,12 +7,14 @@ import EmailList from "./components/EmailList";
 import EmailViewer from "./components/EmailViewer";
 import Footer from "./components/Footer";
 import Logo from "./components/Logo";
+import TutorialModal from "./components/TutorialModal";
 
 function App() {
   const [plotData, setPlotData] = useState<PlotData | null>(null);
   const [emailResults, setEmailResults] = useState([]);
   const [selectedEmail, setSelectedEmail] = useState<EmailResult | null>(null);
   const [hoveredId, setHoveredId] = useState<number | null>(null);
+  const [showTutorial, setShowTutorial] = useState(true);
 
   const handleEmailHover = (id: number | null) => {
     setHoveredId(id);
@@ -24,6 +26,12 @@ function App() {
     const element = document.getElementById(`email-${pointIndex}`);
     element?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+
+  const exampleQuery = "evidence of criminal activity";
+  useEffect(() => {
+    // Call handleSearch with the example query when component mounts
+    handleSearch(exampleQuery);
+  }, []);
 
   const handleSearch = async (query: string) => {
     try {
@@ -54,6 +62,10 @@ function App() {
 
   return (
     <div style={{ backgroundColor: "#f8f9fa", minHeight: "100vh" }}>
+      <TutorialModal
+        show={showTutorial}
+        onHide={() => setShowTutorial(false)}
+      />
       <Container
         fluid
         style={{ maxWidth: "1400px", margin: "0 auto", padding: "20px" }}
@@ -65,7 +77,10 @@ function App() {
               {" "}
               <Logo />
               <div style={{ width: "100%" }}>
-                <SearchBar onSearch={handleSearch} />
+                <SearchBar
+                  onSearch={handleSearch}
+                  initialQuery={exampleQuery}
+                />
               </div>
             </div>
           </Col>

@@ -4,10 +4,11 @@ import { useState } from "react";
 
 interface SearchProps {
   onSearch: (query: string) => void;
+  initialQuery?: string;
 }
 
-function SearchBar({ onSearch }: SearchProps) {
-  const [query, setQuery] = useState("");
+function SearchBar({ onSearch, initialQuery = "" }: SearchProps) {
+  const [query, setQuery] = useState(initialQuery);
 
   const handleSearch = () => {
     onSearch(query);
