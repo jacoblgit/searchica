@@ -15,8 +15,8 @@ const TutorialModal = ({ show, onHide }: TutorialModalProps) => {
         <p className="mb-3">
           Searchica is a tool for exploring a corpus of documents through
           semantic search (finding results based on meaning rather than just
-          keywords) and visualization. This site uses, as an example, a sample
-          of Enron's C-suite emails from the FBI investigation into them.
+          keywords) and visualization. This site uses as an example a sample of
+          Enron's C-suite emails from the FBI investigation into them.
         </p>
         <ul className="mt-3">
           <li className="mb-2">Enter your search query in the search bar. </li>
